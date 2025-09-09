@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Api\Sever;
 
+use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -11,18 +14,26 @@ class UpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user() instanceof User;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'name' => ['sometimes','required', 'string', 'max:255',Rule::unique('servers', 'name')->whereNot('id',$this->id)->where(function ($query) {
+                $query->where('name', $this->name)->where('provider',$this->provider);
+            })],
+            'ip_address' => ['sometimes','required', 'string', 'max:50','unique:servers,ip_address,'.$this->id],
+            'provider' => 'sometimes|required|string|in:aws,digitalocean,vultr,other',
+            'status' => 'sometimes|required|in:active,inactive,maintenance',
+            'cpu_cores' => 'sometimes|required|integer|min:1|max:128',
+            'ram_mb' => 'sometimes|required|integer|min:512|max:1048576',
+            'storage_gb' => 'sometimes|required|integer|min:10|max:1048576',
         ];
     }
 }

@@ -36,4 +36,11 @@ class StoreRequest extends FormRequest
             'storage_gb' => 'required|integer|min:10|max:1048576',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.unique' => 'The server name must be unique for this provider.',
+        ];
+    }
 }
