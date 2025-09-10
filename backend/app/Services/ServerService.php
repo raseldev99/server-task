@@ -81,8 +81,10 @@ class ServerService
      */
     public function storeServer(StoreRequest $request): Server
     {
+        $data = $request->validated();
+        $data['user_id'] = $request->user()->id;
         //store server data
-        return $this->model->create($request->validated());
+        return $this->model->create($data);
     }
 
     /**
