@@ -1,5 +1,5 @@
 import axios from 'axios'
-import tokenManager from "@/utils/tokenManager.js";
+import {tokenManager} from "@/utils/tokenManager.js";
 const BASE_URL = 'http://backend.test/api'
 
 // Create axios instance without authentication
@@ -22,7 +22,7 @@ export const privateApi = axios.create({
 // Request interceptor for private API (adds auth token)
 privateApi.interceptors.request.use(
     (config) => {
-        const token = tokenManager.getToken()
+        const token = tokenManager.getAccessToken()
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }
@@ -41,7 +41,7 @@ privateApi.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             // Token expired or invalid
-            tokenManager.removeToken()
+            tokenManager.clearAuthData()
             // Redirect to login page
             window.location.href = '/'
         }

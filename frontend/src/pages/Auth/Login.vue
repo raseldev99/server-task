@@ -1,3 +1,43 @@
+<script setup>
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
+import {publicApi} from "@/services/axious.js";
+import apis from "@/services/authService.js";
+import { toast } from 'vue3-toastify';
+import { useRouter } from "vue-router";
+import Button from 'primevue/button';
+import {useAuthStore} from "@/stores/authStore.js";
+
+const router = useRouter();
+
+const authStore = useAuthStore();
+
+const { errors, handleSubmit, defineField,setErrors } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().email().required('Email is required'),
+    password: yup.string().min(6).required("Password is required"),
+  }),
+});
+
+// Creates a submission handler
+const onSubmit = handleSubmit(async (values) => {
+  try {
+    await authStore.login(values);
+    toast.success('Login successfully.');
+  } catch (error) {
+    if (error.status === 422){
+      setErrors(error.response.data.errors || {});
+    }else if(error.status === 401){
+      setErrors({email: error.response?.data?.message || "Something went wrong"});
+    }else {
+      // toast.error(error.response.data.message || "Something went wrong");
+      console.error(error);
+    }
+  }
+});
+const [email, emailAttrs] = defineField('email');
+const [password, passwordAttrs] = defineField('password');
+</script>
 <template>
   <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -5,11 +45,12 @@
     </div>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
+      <form class="space-y-6" @submit="onSubmit">
         <div>
           <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>
           <div class="mt-2">
-            <input type="email" name="email" id="email" autocomplete="email" required="" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+            <input type="email" name="email" id="email" autocomplete="email" v-model="email" v-bind="emailAttrs" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+            <p class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
           </div>
         </div>
 
@@ -21,12 +62,13 @@
             </div>
           </div>
           <div class="mt-2">
-            <input type="password" name="password" id="password" autocomplete="current-password" required="" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+            <input type="password" name="password" id="password" autocomplete="current-password" v-model="password" v-bind="passwordAttrs" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+            <p class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
           </div>
         </div>
 
         <div>
-          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
+          <Button pt:root="flex w-full justify-center !py-1.5" type="submit" label="Sign in" :loading="authStore.loading" />
         </div>
       </form>
 

@@ -2,7 +2,7 @@
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import {publicApi} from "@/services/axious.js";
-import apis from "@/services/apis.js";
+import apis from "@/services/authService.js";
 import { toast } from 'vue3-toastify';
 import { useRouter } from "vue-router";
 import {ref} from "vue";
@@ -87,8 +87,7 @@ const [password_confirmation, confirmPasswordAttrs] = defineField('password_conf
           </div>
         </div>
         <div>
-<!--          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign Up</button>-->
-          <Button type="submit" label="Sign Up" icon="pi pi-search" :loading="loading" />
+          <Button  pt:root="flex w-full justify-center !py-1.5" type="submit" label="Sign Up" :loading="loading" />
         </div>
       </form>
 
