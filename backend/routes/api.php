@@ -23,6 +23,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //dashboard statics
     Route::controller(DashboardController::class)->prefix('dashboard')->group(function () {
         Route::get('/stats', [DashboardController::class, 'stats']);
+        Route::get('/last-year-stats', [DashboardController::class, 'lastYearStats']);
     });
 });
 

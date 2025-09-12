@@ -23,4 +23,9 @@ class DashboardController extends Controller
 
         return $this->success(data:$statistics);
     }
+
+    public function lastYearStats()
+    {
+        return $this->success(data: $this->serverService->lastYearOverView());
+    }
 }

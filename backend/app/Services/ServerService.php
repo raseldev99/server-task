@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Http\Requests\Api\Sever\StoreRequest;
 use App\Http\Requests\Api\Sever\UpdateRequest;
 use App\Models\Server;
+use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 
 
@@ -136,6 +138,34 @@ class ServerService
             'active_percentage' => $total > 0 ? round(($active / $total) * 100, 2) : 0,
             'inactive_percentage' => $total > 0 ? round(($inactive / $total) * 100, 2) : 0,
             'maintenance_percentage' => $total > 0 ? round(($maintenance / $total) * 100, 2) : 0,
+        ];
+    }
+
+    public function lastYearOverView(): array
+    {
+        $lastYear = Carbon::now()->subYear();
+
+        $data = Server::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->where('created_at', '>=', $lastYear)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // Prepare full 12 months dataset (fill missing months with 0)
+        $months = collect(range(1, 12))->map(function ($m) use ($data) {
+            $record = $data->firstWhere('month', $m);
+            return [
+                'month' => $m,
+                'total' => $record ? $record->total : 0,
+            ];
+        });
+
+        return [
+            'labels' => $months->map(fn($m) => Carbon::create()->month($m['month'])->format('M')),
+            'data'   => $months->pluck('total'),
         ];
     }
 }

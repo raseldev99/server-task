@@ -5,6 +5,7 @@ export const useServerStore = defineStore('server', {
     state: () => ({
         servers: [],
         dashboardStats: {},
+        lastYearStats: {},
         pagination:{},
         server: {},
         loading: false,
@@ -180,6 +181,21 @@ export const useServerStore = defineStore('server', {
             try {
                 const response = await ServerService.getServerStats()
                 this.dashboardStats = response.data.data || response.data
+                return response.data
+            } catch (error) {
+                this.error = error.response?.data?.message || 'Failed to fetch server'
+                throw error
+            } finally {
+                this.loading = false
+            }
+        },
+
+        async getLastYearStats() {
+            this.loading = true
+            this.error = null
+            try {
+                const response = await ServerService.getLastYearStats()
+                this.lastYearStats = response.data.data || response.data
                 return response.data
             } catch (error) {
                 this.error = error.response?.data?.message || 'Failed to fetch server'

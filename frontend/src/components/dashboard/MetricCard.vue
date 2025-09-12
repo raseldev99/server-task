@@ -3,19 +3,23 @@
       :id="`metric-${id}`"
       class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
   >
+    <!-- Label -->
     <p class="text-theme-sm text-gray-500 dark:text-gray-400">
-      {{ label }}
+      <Skeleton v-if="loading" width="6rem" height="1rem" />
+      <span v-else>{{ label }}</span>
     </p>
 
     <div class="mt-3 flex items-end justify-between">
       <div>
+        <!-- Value -->
         <h4 class="text-2xl font-bold text-gray-800 dark:text-white/90">
-          {{ value }}
+          <Skeleton v-if="loading" width="4rem" height="2rem" />
+          <span v-else>{{ value }}</span>
         </h4>
       </div>
 
-      <!-- Only show percentage if provided -->
-      <div v-if="percentage !== null" class="flex items-center gap-1">
+      <!-- Percentage -->
+      <div v-if="!loading && percentage !== null" class="flex items-center gap-1">
         <span
             class="flex items-center gap-1 rounded-full px-2 py-0.5 text-theme-xs font-medium"
             :class="percentageColor"
@@ -23,19 +27,26 @@
           {{ percentage }}%
         </span>
       </div>
+
+      <!-- Skeleton placeholder for percentage -->
+      <div v-else-if="loading">
+        <Skeleton shape="circle" size="2rem" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import Skeleton from "primevue/skeleton";
 
 const props = defineProps({
   id: { type: String, required: true },
   label: { type: String, required: true },
   value: { type: [String, Number], required: true },
   percentage: { type: [Number, String], default: null },
-  type: { type: String, default: "neutral" }, // success | error | warning | neutral
+  type: { type: String, default: "neutral" },
+  loading: { type: Boolean, default: false },
 });
 
 const percentageColor = computed(() => {

@@ -5,6 +5,7 @@
         label="Total Servers"
         :value="stats?.total || 0"
         type="neutral"
+        :loading="loading"
     />
 
     <MetricCard
@@ -13,6 +14,7 @@
         :value="stats?.active || 0"
         :percentage="stats?.active_percentage || 0"
         type="success"
+        :loading="loading"
     />
 
     <MetricCard
@@ -21,6 +23,7 @@
         :value="stats?.inactive || 0"
         :percentage="stats?.inactive_percentage || 0"
         type="error"
+        :loading="loading"
     />
 
     <MetricCard
@@ -29,9 +32,10 @@
         :value="stats?.maintenance || 0"
         :percentage="stats?.maintenance_percentage || 0"
         type="warning"
+        :loading="loading"
     />
   </div>
-  <Statistics />
+  <Statistics :statsData="lastYearStats" :loading="loading" />
 </template>
 <script setup lang="ts">
 import Statistics from "@/components/dashboard/Statistics.vue";
@@ -44,10 +48,13 @@ const serverStore = useServerStore();
 const toast = useToast();
 
 const stats = computed(() => serverStore.dashboardStats);
+const lastYearStats = computed(() => serverStore.lastYearStats);
+const loading = computed(() => serverStore.loading);
 
 onMounted(async () => {
   try {
     await serverStore.getDashboardStats();
+    await serverStore.getLastYearStats()
   } catch (error) {
     console.error(error);
     toast.add({ severity:'error', summary:'Error', detail: 'Failed to load stats', life: 3000 });

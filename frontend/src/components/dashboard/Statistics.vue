@@ -4,74 +4,66 @@
   >
     <div class="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
       <div class="w-full">
-        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Statistics</h3>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+          <Skeleton v-if="loading" width="10rem" height="1.5rem" />
+          <span v-else>Server Statistics</span>
+        </h3>
         <p class="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-          Target you’ve set for each month
+          <Skeleton v-if="loading" width="16rem" height="1rem" />
+          <span v-else>Servers created in the last 12 months</span>
         </p>
       </div>
-
-      <div class="relative">
-        <div class="inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-gray-900">
-          <button
-              v-for="option in options"
-              :key="option.value"
-              @click="selected = option.value"
-              :class="[
-              selected === option.value
-                ? 'shadow-theme-xs text-gray-900 dark:text-white bg-white dark:bg-gray-800'
-                : 'text-gray-500 dark:text-gray-400',
-              'px-3 py-2 font-medium rounded-md text-theme-sm hover:text-gray-900 hover:shadow-theme-xs dark:hover:bg-gray-800 dark:hover:text-white',
-            ]"
-          >
-            {{ option.label }}
-          </button>
-        </div>
-      </div>
     </div>
+
     <div class="max-w-full overflow-x-auto custom-scrollbar">
       <div id="chartThree" class="-ml-4 min-w-[1000px] xl:min-w-full pl-2">
-        <VueApexCharts type="area" height="310" :options="chartOptions" :series="series" />
+        <!-- Chart or Skeleton -->
+        <div v-if="loading" class="p-4">
+          <Skeleton width="100%" height="310px" />
+        </div>
+        <VueApexCharts
+            v-else
+            type="area"
+            height="310"
+            :options="chartOptions"
+            :series="series"
+        />
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
+<script setup>
+import { ref, watch } from "vue";
+import VueApexCharts from "vue3-apexcharts";
+import Skeleton from "primevue/skeleton";
 
-const options = [
-  { value: 'optionOne', label: 'Monthly' },
-  { value: 'optionTwo', label: 'Quarterly' },
-  { value: 'optionThree', label: 'Annually' },
-]
-
-const selected = ref('optionOne')
-import VueApexCharts from 'vue3-apexcharts'
+const props = defineProps({
+  statsData: {
+    type: Object,
+    required: true,
+  },
+  loading: { type: Boolean, default: false },
+});
 
 const series = ref([
   {
-    name: 'Sales',
-    data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
+    name: "Servers Created",
+    data: [],
   },
-  {
-    name: 'Revenue',
-    data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
-  },
-])
+]);
 
 const chartOptions = ref({
   legend: {
     show: false,
-    position: 'top',
-    horizontalAlign: 'left',
+    position: "top",
+    horizontalAlign: "left",
   },
-  colors: ['#465FFF', '#9CB9FF'],
+  colors: ["#465FFF", "#9CB9FF"],
   chart: {
-    fontFamily: 'Outfit, sans-serif',
-    type: 'area',
-    toolbar: {
-      show: false,
-    },
+    fontFamily: "Outfit, sans-serif",
+    type: "area",
+    toolbar: { show: false },
   },
   fill: {
     gradient: {
@@ -81,70 +73,36 @@ const chartOptions = ref({
     },
   },
   stroke: {
-    curve: 'straight',
+    curve: "straight",
     width: [2, 2],
   },
-  markers: {
-    size: 0,
-  },
-  labels: {
-    show: false,
-    position: 'top',
-  },
+  markers: { size: 0 },
   grid: {
-    xaxis: {
-      lines: {
-        show: false,
-      },
-    },
-    yaxis: {
-      lines: {
-        show: true,
-      },
-    },
+    xaxis: { lines: { show: false } },
+    yaxis: { lines: { show: true } },
   },
-  dataLabels: {
-    enabled: false,
-  },
-  tooltip: {
-    x: {
-      format: 'dd MMM yyyy',
-    },
-  },
+  dataLabels: { enabled: false },
+  tooltip: { x: { show: true } },
   xaxis: {
-    type: 'category',
-    categories: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ],
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-    tooltip: {
-      enabled: false,
-    },
+    categories: [],
+    axisBorder: { show: false },
+    axisTicks: { show: false },
+    tooltip: { enabled: false },
   },
-  yaxis: {
-    title: {
-      style: {
-        fontSize: '0px',
-      },
+  yaxis: { title: { style: { fontSize: "0px" } } },
+});
+
+// Watch statsData and update chart
+watch(
+    () => props.statsData,
+    (newVal) => {
+      if (!props.loading) {
+        chartOptions.value.xaxis.categories = newVal.labels;
+        series.value[0].data = newVal.data;
+      }
     },
-  },
-})
+    { immediate: true }
+);
 </script>
 
 <style scoped>

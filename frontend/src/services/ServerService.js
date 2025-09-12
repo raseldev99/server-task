@@ -35,5 +35,6 @@ export const ServerService = {
     deleteServer: (id) => privateApi.delete(`/servers/${id}`),
     bulkStatusUpdate: (statusData) => privateApi.post('/servers/bulk-status-update', statusData),
     bulkDeleteServers: (serverIds) => privateApi.post('/servers/bulk-delete-server', serverIds),
-    getServerStats: () => privateApi.get('/dashboard/stats')
+    getServerStats: () => privateApi.get('/dashboard/stats'),
+    getLastYearStats: () => privateApi.get('/dashboard/last-year-stats')
 }

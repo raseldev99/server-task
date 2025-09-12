@@ -27,6 +27,7 @@ class ServerFactory extends Factory
             'ram_mb' => $this->faker->numberBetween(512, 1048576),
             'storage_gb' => $this->faker->numberBetween(10, 1048576),
             'user_id' => User::inRandomOrder()->first()->id,
+            'created_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }
