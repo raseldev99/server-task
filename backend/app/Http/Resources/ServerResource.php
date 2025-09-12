@@ -22,6 +22,7 @@ class ServerResource extends JsonResource
             'cpu_cores' => $this->cpu_cores,
             'ram_mb' => $this->ram_mb,
             'storage_gb' => $this->storage_gb,
+            'status' => $this->status,
             'user' => new UserResource($this->whenLoaded('user')),
         ];
     }

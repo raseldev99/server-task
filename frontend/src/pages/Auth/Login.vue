@@ -1,13 +1,12 @@
 <script setup>
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-import {publicApi} from "@/services/axious.js";
-import apis from "@/services/authService.js";
-import { toast } from 'vue3-toastify';
 import { useRouter } from "vue-router";
 import Button from 'primevue/button';
 import {useAuthStore} from "@/stores/authStore.js";
+import { useToast } from 'primevue/usetoast';
 
+const toast = useToast();
 const router = useRouter();
 
 const authStore = useAuthStore();
@@ -23,15 +22,14 @@ const { errors, handleSubmit, defineField,setErrors } = useForm({
 const onSubmit = handleSubmit(async (values) => {
   try {
     await authStore.login(values);
-    toast.success('Login successfully.');
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Login successfully.', life: 3000 });
   } catch (error) {
     if (error.status === 422){
       setErrors(error.response.data.errors || {});
     }else if(error.status === 401){
       setErrors({email: error.response?.data?.message || "Something went wrong"});
     }else {
-      // toast.error(error.response.data.message || "Something went wrong");
-      console.error(error);
+      toast.add({ severity: 'error', summary: 'Error', detail: error.response?.data?.message || "Something went wrong", life: 3000 });
     }
   }
 });

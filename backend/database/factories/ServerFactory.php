@@ -19,7 +19,7 @@ class ServerFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->domainWord(),
+            'name' =>$this->faker->unique()->sentence(2),
             'ip_address' => $this->faker->unique()->ipv4(),
             'provider' => $this->faker->randomElement(['aws', 'digitalocean', 'vultr', 'other']),
             'status' => $this->faker->randomElement(['active', 'inactive', 'maintenance']),

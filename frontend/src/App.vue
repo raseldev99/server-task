@@ -1,14 +1,11 @@
-<template>
-  <component :is="layoutComponent">
-    <router-view />
-  </component>
-</template>
-
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import GuestLayout from '@/layouts/GuestLayout.vue'
-import AuthLayout from '@/layouts/AuthLayout.vue'
+import GuestLayout from '@/components/layout/GuestLayout.vue'
+import ThemeProvider from './components/layout/ThemeProvider.vue'
+import SidebarProvider from './components/layout/SidebarProvider.vue'
+import AuthLayout from "@/components/layout/AuthLayout.vue";
+import {Toast} from "primevue";
 
 const route = useRoute()
 
@@ -25,3 +22,15 @@ const layoutComponent = computed(() => {
   }
 })
 </script>
+
+<template>
+ <ThemeProvider>
+   <SidebarProvider>
+     <component :is="layoutComponent">
+       <Toast position="bottom-right"/>
+       <router-view />
+     </component>
+   </SidebarProvider>
+ </ThemeProvider>
+</template>
+

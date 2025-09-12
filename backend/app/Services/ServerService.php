@@ -67,7 +67,6 @@ class ServerService
         if (!in_array($sortField, $allowedSorts)) {
             $sortField = 'created_at';
         }
-
         $query->orderBy($sortField, $sortOrder);
 
         // Pagination

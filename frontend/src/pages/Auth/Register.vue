@@ -3,13 +3,12 @@ import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import {publicApi} from "@/services/axious.js";
 import apis from "@/services/authService.js";
-import { toast } from 'vue3-toastify';
 import { useRouter } from "vue-router";
 import {ref} from "vue";
 import Button from 'primevue/button';
+import { useToast } from 'primevue/usetoast';
 
-
-
+const toast = useToast();
 const router = useRouter();
 const loading = ref(false);
 
@@ -28,13 +27,13 @@ const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
   try {
     const {} = await publicApi.post(apis.register, values);
-    toast.success('Register successfully.');
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Register successfully.', life: 3000 });
     await router.push('/');
   } catch (error) {
      if (error.status === 422){
        setErrors(error.response.data.errors || {});
      }else {
-       toast.error(error.response.data.message || "Something went wrong");
+       toast.add({ severity: 'error', summary: 'Error', detail: error.response?.data?.message || "Something went wrong", life: 3000 });
      }
   }finally {
     loading.value = false;

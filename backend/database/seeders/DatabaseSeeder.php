@@ -23,6 +23,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         //seed servers
-        Server::factory()->count(10)->create();
+        Server::factory()->count(5000)->create();
     }
 }

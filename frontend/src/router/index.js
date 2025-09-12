@@ -1,18 +1,29 @@
 import { createWebHistory, createRouter } from 'vue-router'
 import Login from "@/pages/Auth/Login.vue";
-import GuestLayout from "@/layouts/GuestLayout.vue";
+import GuestLayout from "@/components/layout/GuestLayout.vue";
 import Register from "@/pages/Auth/Register.vue";
 import {setupAuthGuards} from "@/router/guards.js";
 import Dashboard from "@/pages/Dashboard.vue";
+import Ecommerce from "@/views/Ecommerce.vue";
+import AllServers from "@/pages/AllServers.vue";
 
 const routes = [
+    {
+        path: '/',
+        redirect: '/dashboard',
+        name: 'dashboard-redirect',
+        meta: {
+            title: 'Dashboard',
+        }
+    },
     {
         path: '/login',
         name: 'Login',
         component: Login,
         meta: {
             requiresGuest: true,
-            layout: 'guest'  // Custom meta to specify layout
+            layout: 'guest',
+            title: 'Login',
         }
     },
     {
@@ -21,20 +32,28 @@ const routes = [
         component: Register,
         meta: {
             requiresGuest: true,
-            layout: 'guest'
+            layout: 'guest',
+            title: 'Register'
         }
-    },
-    {
-        path: '/',
-        redirect: '/dashboard'
     },
     {
         path: '/dashboard',
         name: 'Dashboard',
-        component: Dashboard,
+        component: Ecommerce,
         meta: {
             requiresAuth: true,
-            layout: 'auth'
+            layout: 'auth',
+            title: 'Dashboard'
+        }
+    },
+    {
+        path: '/all-servers',
+        name: 'allServers',
+        component: AllServers,
+        meta: {
+            requiresAuth: true,
+            layout: 'auth',
+            title: 'All Servers',
         }
     },
 ]
@@ -42,7 +61,15 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
+    // scrollBehavior(to, from, savedPosition) {
+    //     return savedPosition || { left: 0, top: 0 }
+    // },
     routes,
+})
+
+router.beforeEach((to, from, next) => {
+    document.title = `${to.meta.title} | Hosting Server`
+    next()
 })
 setupAuthGuards(router)
 
