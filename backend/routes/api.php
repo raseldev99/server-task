@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegistrationController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ServerController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(ServerController::class)->prefix('servers')->group(function () {
        Route::post('/bulk-status-update', [ServerController::class, 'bulkStatusUpdate']);
        Route::post('/bulk-delete-server', [ServerController::class, 'bulkDestroy']);
+    });
+
+    //dashboard statics
+    Route::controller(DashboardController::class)->prefix('dashboard')->group(function () {
+        Route::get('/stats', [DashboardController::class, 'stats']);
     });
 });
 

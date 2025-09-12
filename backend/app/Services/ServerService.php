@@ -117,4 +117,25 @@ class ServerService
     {
         return $this->model->whereIn('id', $ids)->update(['status' => $status]);
     }
+
+    /**
+     * Get overall server statistics
+     */
+    public function getServerStatistics(): array
+    {
+        $total = Server::count();
+        $active = Server::where('status', 'active')->count();
+        $inactive = Server::where('status', 'inactive')->count();
+        $maintenance = Server::where('status', 'maintenance')->count();
+
+        return [
+            'total' => $total,
+            'active' => $active,
+            'inactive' => $inactive,
+            'maintenance' => $maintenance,
+            'active_percentage' => $total > 0 ? round(($active / $total) * 100, 2) : 0,
+            'inactive_percentage' => $total > 0 ? round(($inactive / $total) * 100, 2) : 0,
+            'maintenance_percentage' => $total > 0 ? round(($maintenance / $total) * 100, 2) : 0,
+        ];
+    }
 }
