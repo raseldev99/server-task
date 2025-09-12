@@ -59,7 +59,7 @@
           <label class="text-xs font-semibold text-gray-500">IP Address</label>
           <div class="flex items-center gap-2">
             <span class="text-sm font-mono">{{ serverData.ip_address }}</span>
-            <Button icon="pi pi-copy" size="small" text rounded @click="copyToClipboard(serverData?.ip_address)" v-tooltip.top="'Copy IP'"/>
+            <Button icon="pi pi-copy" size="small" text rounded @click="copyToClipboard(serverData?.ip_address)"/>
           </div>
         </div>
 
@@ -115,7 +115,7 @@
             <label class="text-xs font-semibold text-gray-500">Email</label>
             <div class="flex items-center gap-2">
               <span class="text-sm">{{ serverData.user.email }}</span>
-              <Button icon="pi pi-envelope" size="small" text rounded @click="openEmailClient(serverData.user.email)" v-tooltip.top="'Send Email'"/>
+              <Button icon="pi pi-envelope" size="small" text rounded @click="openEmailClient(serverData.user.email)" />
             </div>
           </div>
         </div>
