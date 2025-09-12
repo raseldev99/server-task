@@ -4,6 +4,7 @@ import { ServerService } from '@/services/ServerService'
 export const useServerStore = defineStore('server', {
     state: () => ({
         servers: [],
+        dashboardStats: {},
         pagination:{},
         server: {},
         loading: false,
@@ -167,6 +168,21 @@ export const useServerStore = defineStore('server', {
                 return true
             } catch (error) {
                 this.error = error.response?.data?.message || 'Failed to delete servers'
+                throw error
+            } finally {
+                this.loading = false
+            }
+        },
+
+        async getDashboardStats() {
+            this.loading = true
+            this.error = null
+            try {
+                const response = await ServerService.getServerStats()
+                this.dashboardStats = response.data.data || response.data
+                return response.data
+            } catch (error) {
+                this.error = error.response?.data?.message || 'Failed to fetch server'
                 throw error
             } finally {
                 this.loading = false

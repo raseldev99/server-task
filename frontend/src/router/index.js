@@ -75,7 +75,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | Hosting Server`
+    document.title = `${to.meta.title} | NexaCloud`
     next()
 })
 setupAuthGuards(router)

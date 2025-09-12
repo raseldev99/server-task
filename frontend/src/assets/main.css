@@ -40,18 +40,19 @@ layer(base);
     --color-white: #ffffff;
     --color-black: #101828;
 
-    --color-brand-25: #f2f7ff;
-    --color-brand-50: #ecf3ff;
-    --color-brand-100: #dde9ff;
-    --color-brand-200: #c2d6ff;
-    --color-brand-300: #9cb9ff;
-    --color-brand-400: #7592ff;
-    --color-brand-500: #465fff;
-    --color-brand-600: #3641f5;
-    --color-brand-700: #2a31d8;
-    --color-brand-800: #252dae;
-    --color-brand-900: #262e89;
-    --color-brand-950: #161950;
+    --color-brand-25: #f8fafc;  /* mapped from --p-slate-50 */
+    --color-brand-50: #f1f5f9;  /* mapped from --p-slate-100 */
+    --color-brand-100: #e2e8f0; /* mapped from --p-slate-200 */
+    --color-brand-200: #cbd5e1; /* mapped from --p-slate-300 */
+    --color-brand-300: #94a3b8; /* mapped from --p-slate-400 */
+    --color-brand-400: #64748b; /* mapped from --p-slate-500 */
+    --color-brand-500: #475569; /* mapped from --p-slate-600 */
+    --color-brand-600: #334155; /* mapped from --p-slate-700 */
+    --color-brand-700: #1e293b; /* mapped from --p-slate-800 */
+    --color-brand-800: #0f172a; /* mapped from --p-slate-900 */
+    --color-brand-900: #020617; /* mapped from --p-slate-950 */
+    --color-brand-950: #020617; /* same as slate-950 to keep full scale */
+
 
     --color-blue-light-25: #f5fbff;
     --color-blue-light-50: #f0f9ff;
