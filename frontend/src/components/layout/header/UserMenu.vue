@@ -1,14 +1,20 @@
 <script setup>
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon } from '@/components/icons/index.js'
-import { RouterLink } from 'vue-router'
+import {RouterLink, useRouter} from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
 import {useAuthStore} from "@/stores/authStore.js";
 import ProfilePic from "@/components/common/ProfilePic.vue";
+import { useToast } from 'primevue/usetoast';
 
 const authStore = useAuthStore();
+const toast = useToast();
+const router = useRouter()
 
 const dropdownOpen = ref(false)
 const dropdownRef = ref(null)
+const loading = ref(false)
+
+
 
 const menuItems = [
   { href: '/profile', icon: UserCircleIcon, text: 'Edit profile' },
@@ -22,10 +28,18 @@ const closeDropdown = () => {
   dropdownOpen.value = false
 }
 
-const signOut = () => {
-  // Implement sign out logic here
-  console.log('Signing out...')
-  closeDropdown()
+const signOut = async () => {
+  loading.value = true
+  try {
+    await authStore.logout()
+    toast.add({severity:'success', summary:'Success', detail:'Logged out successfully',  life: 3000 })
+    await router.push('/login')
+  } catch (error) {
+    toast.add({severity:'error', summary:'Error', detail:'Failed to logout',  life: 3000 })
+  } finally {
+    closeDropdown()
+    loading.value = false
+  }
 }
 
 const handleClickOutside = (event) => {
@@ -84,16 +98,22 @@ onUnmounted(() => {
           </router-link>
         </li>
       </ul>
-      <router-link
-        to="/signin"
-        @click="signOut"
-        class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+      <button
+          @click="signOut"
+          :disabled="loading"
+          class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:disabled:hover:bg-transparent w-full text-left"
       >
+        <!-- Loading spinner -->
+        <div v-if="loading" class="animate-spin h-4 w-4 border-2 border-gray-300 border-t-gray-600 rounded-full dark:border-gray-600 dark:border-t-gray-300"></div>
+
+        <!-- Logout icon -->
         <LogoutIcon
-          class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
+            v-else
+            class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300 group-disabled:text-gray-400"
         />
-        Sign out
-      </router-link>
+
+        {{ loading ? 'Signing out...' : 'Sign out' }}
+      </button>
     </div>
     <!-- Dropdown End -->
   </div>

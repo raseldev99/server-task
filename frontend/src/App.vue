@@ -26,8 +26,8 @@ const layoutComponent = computed(() => {
 <template>
  <ThemeProvider>
    <SidebarProvider>
+     <Toast position="bottom-right"/>
      <component :is="layoutComponent">
-       <Toast position="bottom-right"/>
        <router-view />
      </component>
    </SidebarProvider>

@@ -1,11 +1,10 @@
 import { createWebHistory, createRouter } from 'vue-router'
 import Login from "@/pages/Auth/Login.vue";
-import GuestLayout from "@/components/layout/GuestLayout.vue";
 import Register from "@/pages/Auth/Register.vue";
 import {setupAuthGuards} from "@/router/guards.js";
-import Dashboard from "@/pages/Dashboard.vue";
-import Ecommerce from "@/views/Ecommerce.vue";
 import AllServers from "@/pages/AllServers.vue";
+import FourZeroFour from "@/pages/Errors/FourZeroFour.vue";
+import Dashboard from "@/pages/Dashboard.vue";
 
 const routes = [
     {
@@ -39,7 +38,7 @@ const routes = [
     {
         path: '/dashboard',
         name: 'Dashboard',
-        component: Ecommerce,
+        component: Dashboard,
         meta: {
             requiresAuth: true,
             layout: 'auth',
@@ -54,6 +53,14 @@ const routes = [
             requiresAuth: true,
             layout: 'auth',
             title: 'All Servers',
+        }
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: FourZeroFour,
+        meta: {
+            title: '404 Not Found',
         }
     },
 ]

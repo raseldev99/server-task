@@ -228,6 +228,7 @@ import {
 } from "@/components/icons/index.js";
 import BoxCubeIcon from "@/components/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar.js";
+import {ServerIcon} from "lucide-vue-next";
 
 const route = useRoute();
 
@@ -243,7 +244,7 @@ const menuGroups = [
         path: '/dashboard'
       },
       {
-        icon: GridIcon,
+        icon: ServerIcon,
         name: "All Servers",
         path: '/all-servers'
       },
