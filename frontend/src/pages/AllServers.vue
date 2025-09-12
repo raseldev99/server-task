@@ -5,12 +5,6 @@
       <Toolbar class="mb-6">
         <template #start>
           <Button
-              label="New Server"
-              icon="pi pi-plus"
-              class="mr-2"
-              @click="openNew"
-          />
-          <Button
               label="Delete"
               icon="pi pi-trash"
               severity="danger"
@@ -34,6 +28,14 @@
               :disabled="!canUpdateBulkStatus"
               class="ml-2"
               @click="confirmBulkStatusUpdate"
+          />
+        </template>
+        <template #end>
+          <Button
+              label="New Server"
+              icon="pi pi-plus"
+              class="mr-2"
+              @click="openNew"
           />
         </template>
       </Toolbar>
@@ -304,10 +306,10 @@
                     option-label="label"
                     option-value="value"
                     placeholder="Select Status"
-                   :invalid="!!errorMessage"
-                   fluid
-                  @update:modelValue="handleChange"
-                  @blur="handleBlur"
+                    :invalid="!!errorMessage"
+                    fluid
+                    @update:modelValue="handleChange"
+                    @blur="handleBlur"
                 />
               </Field>
               <ErrorMessage name="status" class="text-red-500 text-sm mt-1" />
@@ -493,6 +495,16 @@
         />
       </template>
     </Dialog>
+
+    <!-- Server View Modal Component -->
+    <ModalView
+        v-model:visible="viewServerModal"
+        :server-data="currentServerData"
+        :server-id="currentServerId"
+        :loading="serverViewLoading"
+        :error="serverViewError"
+        @retry="handleServerViewRetry"
+    />
   </div>
 </template>
 
@@ -503,15 +515,16 @@ import { useToast } from 'primevue/usetoast';
 import { useServerStore } from '@/stores/serverStore';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+import ModalView from "@/components/server/ModalView.vue";
+import {formatMemory} from "@/utils/format.js";
+
 // PrimeVue Components
 import {
   Toolbar,
   DataTable,
-  InputNumber,
   Dialog,
   Button,
   Select,
-  Textarea,
   Tag,
   IconField,
   InputText,
@@ -595,6 +608,13 @@ const bulkStatus = ref('');
 const filters = ref({});
 const globalFilterValue = ref('');
 const currentContextServer = ref(null);
+
+// Server View Modal State
+const viewServerModal = ref(false);
+const currentServerData = ref(null);
+const currentServerId = ref(null);
+const serverViewLoading = ref(false);
+const serverViewError = ref(null);
 
 // Table state management
 const currentPage = ref(1);
@@ -707,14 +727,6 @@ const loadServersWithCurrentState = async () => {
   }
 };
 
-// Utility functions
-const formatMemory = (mb) => {
-  if (mb >= 1024) {
-    return `${(mb / 1024).toFixed(1)} GB`;
-  }
-  return `${mb} MB`;
-};
-
 const getStatusSeverity = (status) => {
   const statusMap = {
     active: 'success',
@@ -743,6 +755,13 @@ const resetServerForm = () => {
   server.value = { ...DEFAULT_SERVER };
 };
 
+const resetServerViewState = () => {
+  currentServerData.value = null;
+  currentServerId.value = null;
+  serverViewLoading.value = false;
+  serverViewError.value = null;
+};
+
 // Dialog management
 const openNew = () => {
   resetServerForm();
@@ -755,7 +774,7 @@ const hideDialog = () => {
 };
 
 // Form submission handler
-const handleSubmit = async (values,actions) => {
+const handleSubmit = async (values, actions) => {
   try {
     if (serverForm.value.id) {
       await serverStore.updateServer(serverForm.value.id, values);
@@ -767,19 +786,71 @@ const handleSubmit = async (values,actions) => {
     hideDialog();
     await loadServersWithCurrentState();
   } catch (error) {
-    if(error.status === 422){
-      actions.setErrors(error.response?.data?.errors || {})
-    }else {
+    if (error.status === 422) {
+      actions.setErrors(error.response?.data?.errors || {});
+    } else {
       showToast('error', 'Error', serverStore.error || 'Failed to save server');
     }
   }
 };
 
-// Server operations
-const viewServer = (serverData) => {
-  if (!serverData) return;
-  showToast('info', 'View Server', `Viewing server: ${serverData.name}`);
-  // Implement view logic here
+// Server operations - IMPROVED VIEW SERVER FUNCTIONALITY
+const viewServer = async (serverData) => {
+  if (!serverData?.id) {
+    showToast('error', 'Error', 'Invalid server data');
+    return;
+  }
+
+  try {
+    // Reset state and show modal immediately
+    resetServerViewState();
+    currentServerId.value = serverData.id;
+    viewServerModal.value = true;
+    serverViewLoading.value = true;
+
+    // Fetch detailed server data
+    await serverStore.fetchServer(serverData.id);
+
+    // Check if we have the server data from store
+    if (serverStore.server) {
+      currentServerData.value = serverStore.server;
+      serverViewError.value = null;
+    } else {
+      // Fallback to the passed data if detailed fetch failed
+      currentServerData.value = serverData;
+      serverViewError.value = null;
+    }
+  } catch (error) {
+    console.error('Failed to fetch server details:', error);
+    serverViewError.value = error.message || 'Failed to load server details';
+    // Still show basic data if available
+    currentServerData.value = serverData;
+  } finally {
+    serverViewLoading.value = false;
+  }
+};
+
+// Server View Modal Event Handlers
+const handleServerViewRetry = async (serverId) => {
+  if (!serverId) return;
+
+  try {
+    serverViewLoading.value = true;
+    serverViewError.value = null;
+
+    await serverStore.fetchServer(serverId);
+
+    if (serverStore.server) {
+      currentServerData.value = serverStore.server;
+    } else {
+      throw new Error('Failed to load server data');
+    }
+  } catch (error) {
+    console.error('Retry failed:', error);
+    serverViewError.value = error.message || 'Failed to load server details';
+  } finally {
+    serverViewLoading.value = false;
+  }
 };
 
 const editServer = (serverData) => {
