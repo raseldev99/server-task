@@ -29,7 +29,7 @@ php artisan key:generate
 php artisan migrate --seed
 php artisan serve
 ```
-**Runs at:** http://localhost:8000/api
+**Runs at:** http://localhost:8000
 
 ### 3. Frontend Setup (Vue 3 + Vite + TailwindCSS)
 ```bash
@@ -53,7 +53,7 @@ Make sure you have Docker and Docker Compose installed on your system.
 
 ```bash
 git clone https://github.com/raseldev99/server-task.git
-cd nexacloud
+cd server-task
 ```
 
 ### 2. Frontend Setup
@@ -83,7 +83,7 @@ exit
 ## Access URLs
 
 - **Frontend**: 👉 http://localhost:3000
-- **Backend API**: 👉 http://localhost:8000/api
+- **Backend API**: 👉 http://localhost:8000
 
 
 ### 4. Login Credentials
