@@ -10,6 +10,8 @@ This project implements a **Cloud Server Management prototype** where users can:
 - Perform bulk actions 
 - Handle debugging challenges such as query optimization and validation race conditions
 
+![Dashboard Image](project-images/dashboard.png)
+![Server List View](project-images/all-server-list-view.png)
 ---
 
 ## ⚡ Setup Instructions
