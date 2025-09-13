@@ -138,6 +138,12 @@ For detailed examples and testing, check the Postman documentation:
 - **GET** `/api/servers/{id}`  
   View server details
 
+- **POST** `/api/servers/bulk-status-update`  
+  Bulk Status Update
+
+- **POST** `/api/servers/bulk-delete-server`  
+  Bulk Delete Server
+
 - **GET** `/api/servers/dashboard-stats`  
   Get server dashboard statistics
 

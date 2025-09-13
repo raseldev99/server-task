@@ -36,6 +36,7 @@
         @sort="onSort"
         @clear-filter="clearFilter"
         @global-filter-change="onGlobalFilterChange"
+        @update:global-filter-value="globalFilterValue = $event"
         @toggle-menu="toggleMenu"
     />
 

@@ -5,7 +5,7 @@
       header="Server Details"
       :modal="true"
       @update:visible="$emit('update:visible', $event)"
-      @hide="handleHide"
+      @hide="handleCancel"
   >
     <Form
         @submit="handleSubmit"

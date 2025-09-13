@@ -15,11 +15,11 @@
         data-key="id"
         paginator
         scrollable
-        scroll-height="500px"
+        scroll-height="700px"
         filter-display="menu"
         paginator-template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
         current-page-report-template="Showing {first} to {last} of {totalRecords} servers"
-        table-style="min-height: 500px"
+        table-style="min-height: 700px"
         :sort-field="currentSortField"
         :sort-order="currentSortOrder"
         @page="$emit('page-change', $event)"
@@ -44,6 +44,7 @@
                   :model-value="globalFilterValue"
                   placeholder="Search servers..."
                   @input="$emit('global-filter-change', $event)"
+                  @update:model-value="$emit('update:global-filter-value', $event)"
               />
             </IconField>
           </div>
@@ -289,6 +290,7 @@ const emit = defineEmits([
   'sort',
   'clear-filter',
   'global-filter-change',
+  'update:global-filter-value',
   'toggle-menu'
 ]);
 
