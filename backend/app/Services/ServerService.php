@@ -8,7 +8,9 @@ use App\Models\Server;
 use Cache;
 use Carbon\Carbon;
 use DB;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Throwable;
 
 
 class ServerService
@@ -105,18 +107,29 @@ class ServerService
     /**
      * @param StoreRequest $request
      * @return Server
+     * @throws Throwable
      */
     public function storeServer(StoreRequest $request): Server
     {
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
-        //store server data
-        $server = $this->model->create($data);
 
-        //clear cache
-        $this->clearCache();
+        //store server data and prevent Duplicate insert data
+       return DB::transaction(function () use ($data) {
+            try {
+                $server = $this->model->create($data);
+                //clear cache
+                $this->clearCache();
+                return $server;
+            } catch (QueryException $e) {
+                if ($e->getCode() === '23000') {
+                    throw new \Exception("Duplicate IP detected. Please use a unique IP address.");
+                }
+                throw $e;
+            }
+        });
 
-        return $server;
+
     }
 
     /**

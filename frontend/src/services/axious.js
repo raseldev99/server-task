@@ -1,10 +1,9 @@
 import axios from 'axios'
 import {tokenManager} from "@/utils/tokenManager.js";
-const BASE_URL = 'http://backend.test/api'
 
 // Create axios instance without authentication
 export const publicApi = axios.create({
-    baseURL: BASE_URL,
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     }
@@ -12,7 +11,7 @@ export const publicApi = axios.create({
 
 // Create axios instance with authentication
 export const privateApi = axios.create({
-    baseURL: BASE_URL,
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     }
