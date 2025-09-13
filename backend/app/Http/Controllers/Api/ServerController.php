@@ -9,6 +9,7 @@ use App\Http\Resources\ServerResource;
 use App\Models\Server;
 use App\Services\ServerService;
 use App\Traits\ApiResponse;
+use Cache;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -67,7 +68,7 @@ class ServerController extends Controller
      * @return JsonResponse
      */
     public function destroy(Server $server){
-        $server->delete();
+        $this->serverService->deleteServer($server);
         return $this->noContent('Server deleted successfully.');
     }
 
