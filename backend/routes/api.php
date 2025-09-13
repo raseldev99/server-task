@@ -11,7 +11,7 @@ Route::post('/register', [RegistrationController::class, 'register']);
 // user routes
 Route::middleware(['auth:sanctum'])->group(function () {
    Route::post('/logout', [LoginController::class, 'logout']);
-   Route::post('/user', [LoginController::class, 'user']);
+   Route::get('/user', [LoginController::class, 'user']);
    Route::patch('/user/update', [LoginController::class, 'profileUpdate']);
    Route::put('/user/change-password', [LoginController::class, 'changePassword']);
 

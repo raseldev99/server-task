@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('servers', function (Blueprint $table) {
             $table->id();
             $table->string('name')->index();
-            $table->string('ip_address',50)->index()->unique();
+            $table->string('ip_address',50)->unique();
             $table->string('provider',50)->index();
             $table->enum('status', ['active', 'inactive', 'maintenance'])->index()->default('inactive');
             $table->unsignedTinyInteger('cpu_cores');
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['name', 'provider']);
+            $table->index(['created_at']);
         });
     }
 
