@@ -5,4 +5,6 @@ export default {
     register: (userData) => publicApi.post('/register', userData),
     logout: () => privateApi.post('/logout'),
     getCurrentUser: () => privateApi.get('/user'),
+    updateUser: (UserData) => privateApi.patch('/user/update', UserData),
+    changePassword: (data) => privateApi.put('/user/change-password', data),
 }

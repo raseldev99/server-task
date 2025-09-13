@@ -62,6 +62,38 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
+        async changePassword(data) {
+                this.loading = true
+                this.errors = []
+                this.message = null
+                try {
+                    const response = await authService.changePassword(data)
+                    this.clearAuthData()
+                    await router.push('/login')
+                    return response.data
+                } catch (error) {
+                    throw error
+                } finally {
+                    this.loading = false
+                }
+        },
+
+        async updateProfile(data) {
+            this.loading = true
+            this.message = null
+            try {
+                const response = await authService.updateUser(data)
+                if(response.data?.data){
+                    this.updateUserProfile(response.data?.data)
+                }
+                return response.data
+            } catch (error) {
+                throw error
+            } finally {
+                this.loading = false
+            }
+        },
+
         setAuthData(accessToken, user) {
             this.accessToken = accessToken
             this.user = user

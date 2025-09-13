@@ -2,17 +2,18 @@
 
 namespace App\Http\Requests\Api\Auth;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegistrationRequest extends FormRequest
+class ProfileUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user() instanceof User;
     }
 
     /**
@@ -23,9 +24,7 @@ class RegistrationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|min:3|max:50',
-            'email' => 'required|string|email|max:80|unique:users,email',
-            'password' => 'required|string|min:6|max:100|confirmed',
+            'name' => 'sometimes|required|string|max:50',
         ];
     }
 }

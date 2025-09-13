@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Auth\ChangePasswordRequest;
 use App\Http\Requests\Api\Auth\LoginRequest;
+use App\Http\Requests\Api\Auth\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Services\Auth\AuthenticationService;
 use App\Traits\ApiResponse;
@@ -52,5 +54,18 @@ class LoginController extends Controller
         $user = \Auth::user();
         $user->tokens()->delete();
         return $this->success('Logout Successful');
+    }
+
+    public function profileUpdate(ProfileUpdateRequest $request): JsonResponse
+    {
+          $user = $this->authenticationService->profileUpdate($request->validated(), $request->user());
+
+          return $this->success('Profile Update Successful', $user);
+    }
+
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
+        $this->authenticationService->changePassword($request->user(),$request->new_password);
+        return $this->success('Password Changed Successful');
     }
 }

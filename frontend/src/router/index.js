@@ -5,6 +5,7 @@ import {setupAuthGuards} from "@/router/guards.js";
 import AllServers from "@/pages/AllServers.vue";
 import FourZeroFour from "@/pages/Errors/FourZeroFour.vue";
 import Dashboard from "@/pages/Dashboard.vue";
+import Profile from "@/pages/Auth/Profile.vue";
 
 const routes = [
     {
@@ -33,6 +34,16 @@ const routes = [
             requiresGuest: true,
             layout: 'guest',
             title: 'Register'
+        }
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: Profile,
+        meta: {
+            requiresAuth: true,
+            layout: 'auth',
+            title: 'Profile',
         }
     },
     {

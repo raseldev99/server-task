@@ -36,4 +36,17 @@ class AuthenticationService
     {
         return $this->model->create($userData);
     }
+
+    public function profileUpdate(array $userData,User $user): User
+    {
+        $user->update($userData);
+        return $user->refresh();
+    }
+
+    public function changePassword(User $user,string $password): User
+    {
+        $user->update(['password' => $password]);
+        $user->tokens()->delete();
+        return $user->refresh();
+    }
 }
